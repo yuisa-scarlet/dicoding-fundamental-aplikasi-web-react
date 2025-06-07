@@ -1,0 +1,7 @@
+.notes-app {
+  padding: 2rem;
+  flex-grow: 1;
+  background-color: #F7F7F7;
+  height: 100vh;
+  overflow: hidden;
+}

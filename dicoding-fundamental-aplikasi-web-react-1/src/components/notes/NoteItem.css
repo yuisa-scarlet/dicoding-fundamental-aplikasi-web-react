@@ -1,0 +1,28 @@
+.note-item {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background-color: #ffffff;
+  margin-bottom: 16px;
+}
+
+.note-item:hover {
+  border: 1px solid #e0e0e0;
+  cursor: pointer;
+}
+
+.note-body {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+}
+
+.note-item__actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}

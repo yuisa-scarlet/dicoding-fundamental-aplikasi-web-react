@@ -1,0 +1,27 @@
+.textarea-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.label {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 0;
+}
+
+.required {
+    color: red;
+}
+
+.textarea {
+    font-family: inherit;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+    resize: vertical;
+    min-height: 100px;
+}
