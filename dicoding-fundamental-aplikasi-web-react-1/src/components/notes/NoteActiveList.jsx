@@ -1,9 +1,13 @@
 import NoteItem from "./NoteItem";
 import Input from "../ui/input";
-import { useState } from "react";
 
-export function NoteActiveList({ notes, onDelete, onArchive }) {
-  const [searchTerm, setSearchTerm] = useState("");
+export function NoteActiveList({
+  notes,
+  onDelete,
+  onArchive,
+  searchTerm = "",
+  onSearchChange,
+}) {
   const activeNotes = notes.filter((note) => !note.archived);
 
   const filteredNotes = activeNotes.filter((note) =>
@@ -11,7 +15,9 @@ export function NoteActiveList({ notes, onDelete, onArchive }) {
   );
 
   const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
+    if (onSearchChange) {
+      onSearchChange(event.target.value);
+    }
   };
 
   if (activeNotes.length === 0) {

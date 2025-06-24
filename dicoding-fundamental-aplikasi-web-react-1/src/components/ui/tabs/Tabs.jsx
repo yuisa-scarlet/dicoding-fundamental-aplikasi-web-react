@@ -1,12 +1,23 @@
 import styles from "./Tabs.module.css";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-export function Tabs({ tabs, defaultActiveTab = 0, onTabChange }) {
-  const [activeTab, setActiveTab] = useState(defaultActiveTab);
+export function Tabs({ tabs, defaultActiveTab = 0, onTabChange, activeTab }) {
+  const [internalActiveTab, setInternalActiveTab] = useState(defaultActiveTab);
+
+  const currentActiveTab =
+    activeTab !== undefined ? activeTab : internalActiveTab;
+
+  useEffect(() => {
+    if (activeTab === undefined) {
+      setInternalActiveTab(defaultActiveTab);
+    }
+  }, [defaultActiveTab, activeTab]);
 
   const handleTabClick = (index) => {
-    setActiveTab(index);
+    if (activeTab === undefined) {
+      setInternalActiveTab(index);
+    }
     if (onTabChange) {
       onTabChange(index, tabs[index]);
     }
@@ -19,7 +30,7 @@ export function Tabs({ tabs, defaultActiveTab = 0, onTabChange }) {
           <button
             key={index}
             className={`${styles["tab-button"]} ${
-              activeTab === index ? styles.active : ""
+              currentActiveTab === index ? styles.active : ""
             }`}
             onClick={() => handleTabClick(index)}
           >
@@ -28,7 +39,7 @@ export function Tabs({ tabs, defaultActiveTab = 0, onTabChange }) {
         ))}
       </div>
       <div className={styles["tabs-content"]}>
-        {tabs[activeTab] && tabs[activeTab].content}
+        {tabs[currentActiveTab] && tabs[currentActiveTab].content}
       </div>
     </div>
   );

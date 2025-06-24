@@ -1,19 +1,26 @@
 import "./NoteItem.css";
 import { showFormattedDate } from "../../utils/format-date";
 import Button from "../ui/button";
+import { useNavigate } from "react-router";
 
-export default function NoteItem({ note, onClick, onDelete, onArchive }) {
-  const handleClick = () => {
-    if (onClick) {
-      onClick(note.id);
+export default function NoteItem({ note, onDelete, onArchive }) {
+  const navigate = useNavigate();
+
+  const handleClick = (e) => {
+    if (e.target.closest(".note-item__actions")) {
+      return;
     }
+
+    navigate(`/${note.id}`);
   };
 
-  const handleDelete = () => {
+  const handleDelete = (e) => {
+    e.stopPropagation(); 
     onDelete(note.id);
   };
 
-  const handleArchive = () => {
+  const handleArchive = (e) => {
+    e.stopPropagation();
     onArchive(note.id);
   };
 

@@ -1,10 +1,14 @@
 import "./NoteList.css";
 import NoteItem from "./NoteItem";
 import Input from "../ui/input";
-import { useState } from "react";
 
-export function NoteArchiveList({ notes, onDelete, onArchive }) {
-  const [searchTerm, setSearchTerm] = useState("");
+export function NoteArchiveList({
+  notes,
+  onDelete,
+  onArchive,
+  searchTerm = "",
+  onSearchChange,
+}) {
   const archivedNotes = notes.filter((note) => note.archived);
 
   const filteredNotes = archivedNotes.filter((note) =>
@@ -12,7 +16,9 @@ export function NoteArchiveList({ notes, onDelete, onArchive }) {
   );
 
   const handleSearchChange = (event) => {
-    setSearchTerm(event.target.value);
+    if (onSearchChange) {
+      onSearchChange(event.target.value);
+    }
   };
 
   if (archivedNotes.length === 0) {
