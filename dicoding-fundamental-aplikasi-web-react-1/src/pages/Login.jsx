@@ -1,10 +1,10 @@
+import "./Auth.css";
 import { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { useLanguage } from "../hooks/useLanguage";
 import { Link, useNavigate, useLocation } from "react-router";
 import Input from "../components/ui/input";
 import Button from "../components/ui/button";
-import "./Auth.css";
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -66,38 +66,32 @@ export default function Login() {
         <form onSubmit={handleSubmit} className="auth-form">
           {error && <div className="error-message">{error}</div>}
 
-          <div className="form-group">
-            <label htmlFor="email">{t("email")}</label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="Enter your email"
-              required
-            />
-          </div>
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            title={t("email")}
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="Enter your email"
+            required
+          />
 
-          <div className="form-group">
-            <label htmlFor="password">{t("password")}</label>
-            <Input
-              id="password"
-              name="password"
-              type="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="Enter your password"
-              required
-            />
-          </div>
+          <Input
+            id="password"
+            name="password"
+            type="password"
+            title={t("password")}
+            value={formData.password}
+            onChange={handleChange}
+            placeholder="Enter your password"
+            required
+          />
 
           <Button
             type="submit"
             variant="primary"
-            size="large"
             disabled={loading}
-            className="auth-submit-btn"
           >
             {loading ? "Signing in..." : t("login")}
           </Button>

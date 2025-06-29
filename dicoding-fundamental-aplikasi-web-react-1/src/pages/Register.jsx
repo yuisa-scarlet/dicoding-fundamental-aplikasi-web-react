@@ -105,64 +105,54 @@ export default function Register() {
         <form onSubmit={handleSubmit} className="auth-form">
           {error && <div className="error-message">{error}</div>}
 
-          <div className="form-group">
-            <label htmlFor="name">{t("name")}</label>
-            <Input
-              id="name"
-              name="name"
-              type="text"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="Enter your name"
-              required
-            />
-          </div>
+          <Input
+            id="name"
+            name="name"
+            type="text"
+            title={t("name")}
+            value={formData.name}
+            onChange={handleChange}
+            placeholder="Enter your name"
+            required
+          />
 
-          <div className="form-group">
-            <label htmlFor="email">{t("email")}</label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="Enter your email"
-              required
-            />
-          </div>
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            title={t("email")}
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="Enter your email"
+            required
+          />
 
-          <div className="form-group">
-            <label htmlFor="password">{t("password")}</label>
-            <Input
-              id="password"
-              name="password"
-              type="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="Enter your password"
-              required
-            />
-          </div>
+          <Input
+            id="password"
+            name="password"
+            type="password"
+            title={t("password")}
+            value={formData.password}
+            onChange={handleChange}
+            placeholder="Enter your password"
+            required
+          />
 
-          <div className="form-group">
-            <label htmlFor="confirmPassword">{t("confirmPassword")}</label>
-            <Input
-              id="confirmPassword"
-              name="confirmPassword"
-              type="password"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              placeholder="Confirm your password"
-              required
-            />
-          </div>
+          <Input
+            id="confirmPassword"
+            name="confirmPassword"
+            type="password"
+            title={t("confirmPassword")}
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            placeholder="Confirm your password"
+            required
+          />
 
           <Button
             type="submit"
             variant="primary"
-            size="large"
             disabled={loading}
-            className="auth-submit-btn"
           >
             {loading ? "Creating account..." : t("register")}
           </Button>
