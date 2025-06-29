@@ -1,6 +1,7 @@
 import Tabs from "../ui/tabs";
 import { NoteActiveList } from "./NoteActiveList";
 import { NoteArchiveList } from "./NoteArchiveList";
+import { useLanguage } from "../../hooks/useLanguage";
 
 import "./NotesApp.css";
 
@@ -8,14 +9,18 @@ export default function NotesApp({
   notes,
   onDelete,
   onArchive,
+  loading,
+  error,
   searchTerm = "",
   onSearchChange,
   activeTab = "active",
   onTabChange,
 }) {
+  const { t } = useLanguage();
+
   const tabs = [
     {
-      label: "Catatan Aktif",
+      label: t("activeNotes"),
       content: (
         <NoteActiveList
           notes={notes}
@@ -23,11 +28,12 @@ export default function NotesApp({
           onArchive={onArchive}
           searchTerm={searchTerm}
           onSearchChange={onSearchChange}
+          loading={loading}
         />
       ),
     },
     {
-      label: "Arsip",
+      label: t("archive"),
       content: (
         <NoteArchiveList
           notes={notes}
@@ -35,6 +41,7 @@ export default function NotesApp({
           onArchive={onArchive}
           searchTerm={searchTerm}
           onSearchChange={onSearchChange}
+          loading={loading}
         />
       ),
     },
@@ -51,7 +58,14 @@ export default function NotesApp({
 
   return (
     <div className="notes-app">
-      <h1>Notes App</h1>
+      <h1>{t("notesApp")}</h1>
+
+      {error && (
+        <div className="error-banner">
+          <p>Error: {error}</p>
+        </div>
+      )}
+
       <div className="notes-container">
         <Tabs
           tabs={tabs}

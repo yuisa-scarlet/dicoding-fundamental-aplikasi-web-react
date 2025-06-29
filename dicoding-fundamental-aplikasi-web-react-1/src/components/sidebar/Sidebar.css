@@ -5,11 +5,13 @@
   gap: 2rem;
   width: 80px;
   height: 100vh;
-  background-color: #fff;
+  background-color: var(--color-surface);
+  border-right: 1px solid var(--color-border);
   padding-top: 1rem;
   padding-left: 0.5rem;
   padding-right: 0.5rem;
   padding-bottom: 1rem;
+  position: relative;
 }
 
 .sidebar__list {
@@ -27,13 +29,97 @@
   width: 50px;
   height: 50px;
   border-radius: 100%;
-  color: #8c8c8c;
+  color: var(--color-text-secondary);
   text-decoration: none;
+  transition: all 0.2s ease;
 }
 
 .sidebar__list-item:hover {
   cursor: pointer;
-  background-color: #daebfc;
-  border: 1px solid #007dfc;
-  color: #007DFC;
+  background-color: var(--color-primary-light);
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
+}
+
+.sidebar__bottom {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.sidebar__controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.sidebar__user {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--color-background);
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  text-align: center;
+}
+
+.user-name {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  word-break: break-word;
+  max-width: 60px;
+}
+
+.logout-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem;
+  font-size: 0.625rem;
+  color: var(--color-error);
+  border: none;
+  background: transparent;
+}
+
+.logout-btn:hover {
+  background-color: var(--color-error-light);
+  color: var(--color-error);
+}
+
+.logout-btn span {
+  font-size: 0.625rem;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 60px;
+    padding: 0.5rem 0.25rem;
+  }
+
+  .sidebar__list-item {
+    width: 40px;
+    height: 40px;
+  }
+
+  .user-name {
+    font-size: 0.625rem;
+    max-width: 50px;
+  }
 }

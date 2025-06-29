@@ -1,0 +1,29 @@
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.theme-toggle:hover {
+  background-color: var(--color-hover);
+}
+
+.theme-icon {
+  transition: transform 0.2s ease;
+}
+
+.theme-toggle:hover .theme-icon {
+  transform: rotate(10deg);
+}
+
+.theme-text {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+@media (max-width: 640px) {
+  .theme-text {
+    display: none;
+  }
+}

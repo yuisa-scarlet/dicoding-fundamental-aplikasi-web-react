@@ -2,15 +2,34 @@ import NotesApp from "../components/notes/NotesApp";
 import NoteForm from "../components/notes/NoteForm";
 import Modal from "../components/ui/modal";
 import Sidebar from "../components/sidebar";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useSearchParams } from "react-router";
-import { useNotes } from "../utils/notes-manager";
+import { useLanguage } from "../hooks/useLanguage";
+import { useNotes } from "../hooks/useNotes";
 import "../App.css";
 
 export default function NoteIndex() {
-  const { notes, addNote, deleteNote, toggleArchiveNote } = useNotes();
+  const {
+    activeNotes,
+    archivedNotes,
+    addNote,
+    deleteNote,
+    archiveNote,
+    unarchiveNote,
+    loading,
+    error,
+  } = useNotes();
+
+  const { t } = useLanguage();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const notes = useMemo(() => {
+    return [
+      ...activeNotes.map((note) => ({ ...note, archived: false })),
+      ...archivedNotes.map((note) => ({ ...note, archived: true })),
+    ];
+  }, [activeNotes, archivedNotes]);
 
   const searchTerm = searchParams.get("search") || "";
   const activeTab =
@@ -24,9 +43,25 @@ export default function NoteIndex() {
     setIsModalOpen(false);
   };
 
-  const onSubmitNote = (note) => {
-    addNote(note);
-    setIsModalOpen(false);
+  const onSubmitNote = async (noteData) => {
+    const result = await addNote(noteData);
+    if (result.success) {
+      setIsModalOpen(false);
+    }
+  };
+
+  const handleDeleteNote = async (id) => {
+    await deleteNote(id);
+  };
+
+  const handleArchiveNote = async (id) => {
+    const isArchived = archivedNotes.some((note) => note.id === id);
+
+    if (isArchived) {
+      await unarchiveNote(id);
+    } else {
+      await archiveNote(id);
+    }
   };
 
   const handleSearchChange = (newSearchTerm) => {
@@ -43,19 +78,27 @@ export default function NoteIndex() {
     const newParams = new URLSearchParams(searchParams);
     if (tab === "archive") {
       newParams.set("tab", "archive");
-    } else {
+    } else {      
       newParams.delete("tab");
     }
     setSearchParams(newParams);
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <div className="app">
       <Sidebar onOpenModal={handleOpenModal} />
       <NotesApp
         notes={notes}
-        onDelete={deleteNote}
-        onArchive={toggleArchiveNote}
+        onDelete={handleDeleteNote}
+        onArchive={handleArchiveNote}
         searchTerm={searchTerm}
         onSearchChange={handleSearchChange}
         activeTab={activeTab}
@@ -65,7 +108,7 @@ export default function NoteIndex() {
       <Modal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        title="Buat Catatan Baru"
+        title={t("createNote")}
         size="medium"
       >
         <NoteForm onSubmit={onSubmitNote} onClose={handleCloseModal} />

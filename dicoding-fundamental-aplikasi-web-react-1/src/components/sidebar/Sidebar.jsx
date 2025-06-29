@@ -1,7 +1,12 @@
 import "./Sidebar.css";
 
-import { LucidePlus } from "lucide-react";
+import { LucidePlus, LogOut, User } from "lucide-react";
 import Logo from "../AppLogo";
+import ThemeToggle from "../ThemeToggle";
+import { LanguageToggle } from "../ui/language-toggle";
+import { useAuth } from "../../hooks/useAuth";
+import { useLanguage } from "../../hooks/useLanguage";
+import Button from "../ui/button";
 
 const items = [
   {
@@ -22,6 +27,13 @@ function SidebarItem({ icon, onClick }) {
 }
 
 export default function Sidebar({ onOpenModal }) {
+  const { user, logout, isAuthenticated } = useAuth();
+  const { t } = useLanguage();
+
+  const handleLogout = () => {
+    logout();
+  };
+
   return (
     <div className="sidebar">
       <Logo />
@@ -34,6 +46,32 @@ export default function Sidebar({ onOpenModal }) {
           />
         ))}
       </ul>
+
+      <div className="sidebar__bottom">
+        <div className="sidebar__controls">
+          <ThemeToggle />
+          <LanguageToggle />
+        </div>
+
+        {isAuthenticated && (
+          <div className="sidebar__user">
+            <div className="user-info">
+              <User size={16} />
+              <span className="user-name">{user?.name}</span>
+            </div>
+            <Button
+              variant="ghost"
+              size="small"
+              onClick={handleLogout}
+              className="logout-btn"
+              aria-label={t("logout")}
+            >
+              <LogOut size={16} />
+              <span>{t("logout")}</span>
+            </Button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

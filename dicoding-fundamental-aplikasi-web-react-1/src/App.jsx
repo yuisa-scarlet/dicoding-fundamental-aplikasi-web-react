@@ -6,12 +6,22 @@ import Modal from "./components/ui/modal";
 import Sidebar from "./components/sidebar";
 
 import { useState } from "react";
-import { getInitialData } from "./utils/initial-data";
-import { generateId } from "./utils/generate-id";
+import { useNotes } from "./hooks/useNotes";
+import { useAuth } from "./hooks/useAuth";
 
 export default function App() {
-  const [notes, setNotes] = useState(() => getInitialData());
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const {
+    activeNotes,
+    archivedNotes,
+    loading,
+    error,
+    addNote,
+    deleteNote,
+    archiveNote,
+    unarchiveNote,
+  } = useNotes();
+  const { isAuthenticated } = useAuth();
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -21,37 +31,47 @@ export default function App() {
     setIsModalOpen(false);
   };
 
-  const submitNote = (note) => {
-    const newNote = {
-      id: generateId(),
+  const submitNote = async (note) => {
+    const result = await addNote({
       title: note.title,
       body: note.description,
-      archived: false,
-      createdAt: new Date().toISOString(),
-    };
-    setNotes([newNote, ...notes]);
-    setIsModalOpen(false);
+    });
+
+    if (result.success) {
+      setIsModalOpen(false);
+    }
   };
 
-  const handleDeleteNote = (id) => {
-    setNotes((prevNotes) => prevNotes.filter((note) => note.id !== id));
+  const handleDeleteNote = async (id) => {
+    await deleteNote(id);
   };
 
-  const handleArchiveNote = (id) => {
-    setNotes((prevNotes) =>
-      prevNotes.map((note) =>
-        note.id === id ? { ...note, archived: !note.archived } : note
-      )
-    );
+  const handleArchiveNote = async (id) => {
+    const isInActive = activeNotes.some((note) => note.id === id);
+    const isInArchived = archivedNotes.some((note) => note.id === id);
+
+    if (isInActive) {
+      await archiveNote(id);
+    } else if (isInArchived) {
+      await unarchiveNote(id);
+    }
   };
+
+  const allNotes = [...activeNotes, ...archivedNotes];
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <div className="app">
       <Sidebar onOpenModal={handleOpenModal} />
       <NotesApp
-        notes={notes}
+        notes={allNotes}
         onDelete={handleDeleteNote}
         onArchive={handleArchiveNote}
+        loading={loading}
+        error={error}
       />
 
       <Modal

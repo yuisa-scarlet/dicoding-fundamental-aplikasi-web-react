@@ -1,24 +1,26 @@
 import Button from "../ui/button";
 import Input from "../ui/input";
 import Textarea from "../ui/textarea/Textarea";
+import { useLanguage } from "../../hooks/useLanguage";
 import "./NoteForm.css";
 import { useState } from "react";
 
 export default function NoteForm({ onSubmit, onCancel }) {
+  const { t } = useLanguage();
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [body, setBody] = useState("");
   const maxTitleLength = 50;
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (title.trim() && description.trim()) {
-      onSubmit({ title: title.trim(), description: description.trim() });
+    if (title.trim() && body.trim()) {
+      onSubmit({ title: title.trim(), body: body.trim() });
     }
   };
 
   const handleReset = () => {
     setTitle("");
-    setDescription("");
+    setBody("");
     if (onCancel) onCancel();
   };
 
@@ -34,29 +36,33 @@ export default function NoteForm({ onSubmit, onCancel }) {
       <div className="note-form">
         <div className="input-wrapper">
           <Input
-            title="Judul"
-            placeholder="Judul catatanmu"
+            title={t("title")}
+            placeholder={t("titlePlaceholder")}
             value={title}
             onChange={handleTitleLength}
             required
           />
           <div className="note-form__title-length">
-            <span className={`note-form__title-length--${title.length >= maxTitleLength ? 'error' : 'normal'}`}>
+            <span
+              className={`note-form__title-length--${
+                title.length >= maxTitleLength ? "error" : "normal"
+              }`}
+            >
               {title.length}/{maxTitleLength}
             </span>
           </div>
         </div>
         <Textarea
-          title="Deskripsi"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="Jelaskan catatanmu disini!"
+          title={t("description")}
+          value={body}
+          onChange={(e) => setBody(e.target.value)}
+          placeholder={t("descriptionPlaceholder")}
           required
         />
         <div className="note-form__actions">
-          <Button type="submit">Simpan Catatan</Button>
+          <Button type="submit">{t("saveNote")}</Button>
           <Button type="button" variant="secondary" onClick={handleReset}>
-            Reset
+            {t("reset")}
           </Button>
         </div>
       </div>

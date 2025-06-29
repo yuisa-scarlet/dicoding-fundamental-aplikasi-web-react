@@ -1,17 +1,22 @@
 import NoteItem from "./NoteItem";
 import Input from "../ui/input";
+import { useLanguage } from "../../hooks/useLanguage";
 
 export function NoteActiveList({
-  notes,
+  notes = [],
   onDelete,
   onArchive,
   searchTerm = "",
   onSearchChange,
 }) {
-  const activeNotes = notes.filter((note) => !note.archived);
+  const { t } = useLanguage();
 
-  const filteredNotes = activeNotes.filter((note) =>
-    note.title.toLowerCase().includes(searchTerm.toLowerCase())
+  const safeNotes = Array.isArray(notes) ? notes : [];
+  const activeNotes = safeNotes.filter((note) => !note.archived);
+
+  const filteredNotes = activeNotes.filter(
+    (note) =>
+      note.title && note.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleSearchChange = (event) => {
@@ -23,7 +28,7 @@ export function NoteActiveList({
   if (activeNotes.length === 0) {
     return (
       <div>
-        <p>Tidak memiliki catatan aktif</p>
+        <p>{t("noActiveNotes")}</p>
       </div>
     );
   }
@@ -31,7 +36,7 @@ export function NoteActiveList({
   return (
     <>
       <Input
-        placeholder="Cari catatan aktif"
+        placeholder={t("searchActiveNotes")}
         value={searchTerm}
         onChange={handleSearchChange}
       />
@@ -47,7 +52,9 @@ export function NoteActiveList({
           ))
         ) : (
           <li>
-            <p>Tidak ada catatan yang sesuai dengan pencarian "{searchTerm}"</p>
+            <p>
+              {t("noSearchResults")} "{searchTerm}"
+            </p>
           </li>
         )}
       </ul>

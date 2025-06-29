@@ -1,72 +1,181 @@
-import React from "react";
-import { getInitialData } from "./initial-data";
-import { generateId } from "./generate-id";
+const BASE_URL = 'https://notes-api.dicoding.dev/v1';
 
-let notesData = getInitialData();
-let listeners = [];
+function getAccessToken() {
+  return localStorage.getItem('accessToken');
+}
 
-export const subscribeToNotes = (callback) => {
-  listeners.push(callback);
-  return () => {
-    listeners = listeners.filter((listener) => listener !== callback);
-  };
-};
+function putAccessToken(accessToken) {
+  return localStorage.setItem('accessToken', accessToken);
+}
 
-const notifyListeners = () => {
-  listeners.forEach((callback) => callback(notesData));
-};
+function removeAccessToken() {
+  return localStorage.removeItem('accessToken');
+}
 
-// GET all notes
-export const getNotes = () => {
-  return notesData;
-};
+async function fetchWithToken(url, options = {}) {
+  return fetch(url, {
+    ...options,
+    headers: {
+      ...options.headers,
+      Authorization: `Bearer ${getAccessToken()}`,
+    },
+  });
+}
 
-// GET single note by id
-export const getNoteById = (id) => {
-  return notesData.find((note) => note.id == id);
-};
+async function login({ email, password }) {
+  const response = await fetch(`${BASE_URL}/login`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ email, password }),
+  });
 
-// POST new note
-export const addNote = (noteData) => {
-  const newNote = {
-    id: generateId(),
-    title: noteData.title,
-    body: noteData.description,
-    archived: false,
-    createdAt: new Date().toISOString(),
-  };
-  notesData = [newNote, ...notesData];
-  notifyListeners();
-  return newNote;
-};
+  const responseJson = await response.json();
 
-// DELETE note
-export const deleteNote = (id) => {
-  notesData = notesData.filter((note) => note.id != id);
-  notifyListeners();
-};
+  if (responseJson.status !== 'success') {
+    alert(responseJson.message);
+    return { error: true, data: null };
+  }
 
-export const toggleArchiveNote = (id) => {
-  notesData = notesData.map((note) =>
-    note.id == id ? { ...note, archived: !note.archived } : note
-  );
-  notifyListeners();
-};
+  return { error: false, data: responseJson.data };
+}
 
-// HOOK auto-refresh notes
-export const useNotes = () => {
-  const [notes, setNotes] = React.useState(getNotes);
+async function register({ name, email, password }) {
+  const response = await fetch(`${BASE_URL}/register`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ name, email, password }),
+  });
 
-  React.useEffect(() => {
-    const unsubscribe = subscribeToNotes(setNotes);
-    return unsubscribe;
-  }, []);
+  const responseJson = await response.json();
 
-  return {
-    notes,
-    addNote,
-    deleteNote,
-    toggleArchiveNote,
-    getNoteById,
-  };
+  if (responseJson.status !== 'success') {
+    alert(responseJson.message);
+    return { error: true };
+  }
+
+  return { error: false };
+}
+
+async function getUserLogged() {
+  const response = await fetchWithToken(`${BASE_URL}/users/me`);
+  const responseJson = await response.json();
+
+  if (responseJson.status !== 'success') {
+    return { error: true, data: null };
+  }
+
+  return { error: false, data: responseJson.data };
+}
+
+async function addNote({ title, body }) {
+  const response = await fetchWithToken(`${BASE_URL}/notes`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ title, body }),
+  });
+
+  const responseJson = await response.json();
+
+  if (responseJson.status !== 'success') {
+    return { error: true, data: null };
+  }
+
+  return { error: false, data: responseJson.data };
+}
+
+async function getActiveNotes() {
+  const response = await fetchWithToken(`${BASE_URL}/notes`);
+  const responseJson = await response.json();
+
+  if (responseJson.status !== 'success') {
+    return { error: true, data: null };
+  }
+
+  return { error: false, data: responseJson.data };
+}
+
+async function getArchivedNotes() {
+  const response = await fetchWithToken(`${BASE_URL}/notes/archived`);
+  const responseJson = await response.json();
+
+  if (responseJson.status !== 'success') {
+    return { error: true, data: null };
+  }
+
+  return { error: false, data: responseJson.data };
+}
+
+async function getNote(id) {
+  const response = await fetchWithToken(`${BASE_URL}/notes/${id}`);
+  const responseJson = await response.json();
+
+  if (responseJson.status !== 'success') {
+    return { error: true, data: null };
+  }
+
+  return { error: false, data: responseJson.data };
+}
+
+async function archiveNote(id) {
+  const response = await fetchWithToken(`${BASE_URL}/notes/${id}/archive`, {
+    method: 'POST',
+  });
+
+  const responseJson = await response.json();
+
+  if (responseJson.status !== 'success') {
+    return { error: true, data: null };
+  }
+
+  return { error: false, data: responseJson.data };
+}
+
+async function unarchiveNote(id) {
+  const response = await fetchWithToken(`${BASE_URL}/notes/${id}/unarchive`, {
+    method: 'POST',
+  });
+
+  const responseJson = await response.json();
+
+  if (responseJson.status !== 'success') {
+    return { error: true, data: null };
+  }
+
+  return { error: false, data: responseJson.data };
+}
+
+async function deleteNote(id) {
+  const response = await fetchWithToken(`${BASE_URL}/notes/${id}`, {
+    method: 'DELETE',
+  });
+
+  const responseJson = await response.json();
+
+  if (responseJson.status !== 'success') {
+    return { error: true, data: null };
+  }
+
+  return { error: false, data: responseJson.data };
+}
+
+export {
+  getAccessToken,
+  putAccessToken,
+  removeAccessToken,
+  login,
+  register,
+  getUserLogged,
+  addNote,
+  getActiveNotes,
+  getArchivedNotes,
+  getNote,
+  archiveNote,
+  unarchiveNote,
+  deleteNote,
 };

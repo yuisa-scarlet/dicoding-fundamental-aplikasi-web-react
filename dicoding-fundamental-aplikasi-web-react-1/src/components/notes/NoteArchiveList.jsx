@@ -1,18 +1,23 @@
 import "./NoteList.css";
 import NoteItem from "./NoteItem";
 import Input from "../ui/input";
+import { useLanguage } from "../../hooks/useLanguage";
 
 export function NoteArchiveList({
-  notes,
+  notes = [],
   onDelete,
   onArchive,
   searchTerm = "",
   onSearchChange,
 }) {
-  const archivedNotes = notes.filter((note) => note.archived);
+  const { t } = useLanguage();
 
-  const filteredNotes = archivedNotes.filter((note) =>
-    note.title.toLowerCase().includes(searchTerm.toLowerCase())
+  const safeNotes = Array.isArray(notes) ? notes : [];
+  const archivedNotes = safeNotes.filter((note) => note.archived);
+
+  const filteredNotes = archivedNotes.filter(
+    (note) =>
+      note.title && note.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleSearchChange = (event) => {
@@ -24,7 +29,7 @@ export function NoteArchiveList({
   if (archivedNotes.length === 0) {
     return (
       <div>
-        <p>Tidak memiliki arsip catatan</p>
+        <p>{t("noArchivedNotes")}</p>
       </div>
     );
   }
@@ -32,7 +37,7 @@ export function NoteArchiveList({
   return (
     <>
       <Input
-        placeholder="Cari arsip"
+        placeholder={t("searchArchive")}
         value={searchTerm}
         onChange={handleSearchChange}
       />
@@ -48,7 +53,9 @@ export function NoteArchiveList({
           ))
         ) : (
           <li>
-            <p>Tidak ada catatan yang sesuai dengan pencarian "{searchTerm}"</p>
+            <p>
+              {t("noSearchResults")} "{searchTerm}"
+            </p>
           </li>
         )}
       </ul>
